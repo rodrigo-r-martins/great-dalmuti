@@ -113,7 +113,9 @@ export class GameRoom {
     }
 
     const nonJester = selectedCards.find((card) => !card.isJester);
-    const cardValue = nonJester?.value ?? 1;
+    // If at least one non‑Jester is present, the set value is that rank.
+    // If the set consists only of Jesters, it counts as value 13 (worst).
+    const cardValue = nonJester?.value ?? 13;
 
     this.lastPlay = {
       player: playerIndex,
@@ -203,24 +205,32 @@ export class GameRoom {
       return false;
     }
 
-    if (!this.lastPlay) {
-      return true;
-    }
-
-    if (cards.length !== this.lastPlay.count) {
-      return false;
-    }
-
     const nonJesters = cards.filter((card) => !card.isJester);
     if (nonJesters.length > 0) {
       const value = nonJesters[0]?.value;
       if (!nonJesters.every((card) => card.value === value)) {
         return false;
       }
+    }
 
-      if (value >= this.lastPlay.value) {
-        return false;
-      }
+    // If there is no previous play in the current trick, any valid
+    // uniform set (or an all‑Jester set) is allowed as the opening lead.
+    if (!this.lastPlay) {
+      return true;
+    }
+
+    // Subsequent plays must match the card count of the current leading set.
+    if (cards.length !== this.lastPlay.count) {
+      return false;
+    }
+
+    // Compare the value of this set (taking Jesters into account) to the
+    // value of the current leading set. Lower is better.
+    const currentValue =
+      nonJesters.length > 0 ? nonJesters[0]!.value : 13;
+
+    if (currentValue >= this.lastPlay.value) {
+      return false;
     }
 
     return true;
