@@ -31,58 +31,80 @@ export function Game({ game, playerId, onPlayCards, onPass, error }) {
   const lastPlay = game.lastPlay;
 
   return (
-    <div className="game">
-      <div className="panel">
-        <h2>Room {game.roomId}</h2>
-        <p>
-          Turn: <strong>{game.players[game.currentPlayer]?.name ?? "?"}</strong>
+    <div className="grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+        <h2 className="text-lg font-semibold tracking-tight">Room {game.roomId}</h2>
+        <p className="mt-2 text-sm text-slate-200">
+          Turn:{" "}
+          <strong className="font-semibold">
+            {game.players[game.currentPlayer]?.name ?? "?"}
+          </strong>
         </p>
-        <p>
-          You are: <strong>{game.players[myIndex]?.name ?? "Unknown"}</strong>
-          {isMyTurn && " – your turn!"}
+        <p className="mt-1 text-sm text-slate-200">
+          You are:{" "}
+          <strong className="font-semibold">
+            {game.players[myIndex]?.name ?? "Unknown"}
+          </strong>
+          {isMyTurn && <span className="text-emerald-300"> – your turn!</span>}
         </p>
 
         {lastPlay ? (
-          <div className="last-play">
-            <span>Last play by {game.players[lastPlay.player]?.name ?? "?"}:</span>
-            <span>
+          <div className="mt-3 flex flex-col gap-1 text-sm">
+            <span className="text-slate-300">
+              Last play by {game.players[lastPlay.player]?.name ?? "?"}:
+            </span>
+            <span className="font-mono text-slate-100">
               {lastPlay.cards.map((card) =>
                 card.isJester ? "J" : String(card.value),
               ).join(" ")}
             </span>
           </div>
         ) : (
-          <p className="hint">No cards played yet this trick.</p>
+          <p className="mt-3 text-xs text-slate-400">
+            No cards played yet this trick.
+          </p>
         )}
 
         {game.gameState === "roundEnd" && (
-          <p className="hint">Round finished! A new round will be implemented later.</p>
+          <p className="mt-3 text-xs text-amber-300">
+            Round finished! A new round will be implemented later.
+          </p>
         )}
 
-        {error && <p className="error-text">{error}</p>}
+        {error && (
+          <p className="mt-3 text-xs font-medium text-amber-400">
+            {error}
+          </p>
+        )}
       </div>
 
-      <div className="panel">
-        <h3>Your hand</h3>
+      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+        <h3 className="text-base font-semibold tracking-tight">Your hand</h3>
         <PlayerHand hand={myHand} selectedIds={selectedIds} onToggleCard={toggleCard} />
 
-        <div className="actions">
+        <div className="mt-3 flex justify-center gap-3">
           <button
             type="button"
             onClick={handlePlay}
             disabled={!isMyTurn || selectedIds.length === 0}
+            className="inline-flex items-center justify-center rounded-full border border-emerald-500/70 bg-emerald-500/20 px-4 py-2 text-sm font-medium text-emerald-100 shadow-md shadow-emerald-500/40 transition hover:bg-emerald-500/30 disabled:cursor-default disabled:opacity-50"
           >
             Play selected
           </button>
-          <button type="button" onClick={handlePass} disabled={!isMyTurn}>
+          <button
+            type="button"
+            onClick={handlePass}
+            disabled={!isMyTurn}
+            className="inline-flex items-center justify-center rounded-full border border-slate-600/70 bg-slate-900/90 px-4 py-2 text-sm font-medium text-slate-100 shadow-md shadow-black/50 transition hover:border-sky-400 hover:shadow-sky-500/30 disabled:cursor-default disabled:opacity-50"
+          >
             Pass
           </button>
         </div>
       </div>
 
-      <div className="panel">
-        <h3>Players</h3>
-        <ul className="players-list">
+      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+        <h3 className="text-base font-semibold tracking-tight">Players</h3>
+        <ul className="mt-2 flex list-none flex-col gap-1 text-sm">
           {game.players.map((player, index) => {
             const isYou = player.id === playerId;
             const isFinished = game.finishedPlayers.includes(index);
@@ -92,10 +114,10 @@ export function Game({ game, playerId, onPlayCards, onPass, error }) {
               <li
                 key={player.id}
                 className={
-                  "player" +
-                  (isYou ? " player--you" : "") +
-                  (isCurrent ? " player--current" : "") +
-                  (isFinished ? " player--finished" : "")
+                  "flex items-center justify-between rounded-md px-2 py-1 " +
+                  (isYou ? "font-semibold text-sky-200" : "text-slate-100") +
+                  (isCurrent ? " underline decoration-amber-400" : "") +
+                  (isFinished ? " line-through opacity-60" : "")
                 }
               >
                 {player.name}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import { useSocket } from "./hooks/useSocket";
 import { Menu } from "./components/Menu";
 import { Lobby } from "./components/Lobby";
@@ -136,11 +135,28 @@ export default function App() {
   }
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>The Great Dalmuti</h1>
-        <p className="subtitle">Multiplayer card game – server authoritative</p>
-        <p className={connected ? "status status--ok" : "status status--bad"}>
+    <div className="flex flex-col gap-6">
+      <header className="text-center">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
+          The Great Dalmuti
+        </h1>
+        <p className="mt-1 text-sm text-slate-400">
+          Multiplayer card game – server authoritative
+        </p>
+        <p
+          className={
+            "mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium " +
+            (connected
+              ? "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-500/40"
+              : "bg-rose-500/10 text-rose-300 ring-1 ring-rose-500/40")
+          }
+        >
+          <span
+            className={
+              "h-2 w-2 rounded-full " +
+              (connected ? "bg-emerald-400" : "bg-rose-400")
+            }
+          />
           {connected ? "Connected to server" : "Disconnected"}
         </p>
       </header>
