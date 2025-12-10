@@ -1,7 +1,8 @@
 import express from "express";
 import http from "http";
-import { Server as SocketIOServer, Socket } from "socket.io";
+import { Server as SocketIOServer } from "socket.io";
 import cors from "cors";
+import { registerGameSocketHandlers } from "./socket/gameSocketServer";
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
 
@@ -14,10 +15,8 @@ const io = new SocketIOServer(server, {
   cors: { origin: "*" },
 });
 
-io.on("connection", (socket: Socket) => {
-  console.log("Player connected:", socket.id);
-});
+registerGameSocketHandlers(io);
 
 server.listen(PORT, () => {
-  console.log(`Server on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

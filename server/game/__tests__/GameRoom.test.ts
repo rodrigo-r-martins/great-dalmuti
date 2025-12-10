@@ -51,22 +51,30 @@ describe("GameRoom", () => {
     const room = createRoomWithPlayers(3);
     room.startGame();
 
-    const state = room.getState();
-    const currentPlayer = state.players[state.currentPlayer];
-    const hand = state.playerHands[state.currentPlayer];
+    // First, make a valid opening play to establish a lastPlay
+    let state = room.getState();
+    const openingPlayer = state.players[state.currentPlayer];
+    const openingHand = state.playerHands[state.currentPlayer];
+    const openingCard = openingHand[0];
+    const openingResult = room.playCards(openingPlayer.id, [openingCard.id]);
 
-    // attempt to play empty set
-    const resultEmpty = room.playCards(currentPlayer.id, []);
+    expect(openingResult.success).toBe(true);
+
+    state = room.getState();
+
+    // attempt to play empty set (always invalid)
+    const nextPlayerIndex = state.currentPlayer;
+    const nextPlayer = state.players[nextPlayerIndex];
+    const resultEmpty = room.playCards(nextPlayer.id, []);
     expect(resultEmpty.success).toBe(false);
 
-    // create an obviously invalid combination: two different non-jester values
-    const nonJesters = hand.filter((c) => !c.isJester);
-    if (nonJesters.length >= 2) {
-      const [c1, c2] = nonJesters;
-      if (c1.value !== c2.value) {
-        const resultInvalidCombo = room.playCards(currentPlayer.id, [c1.id, c2.id]);
-        expect(resultInvalidCombo.success).toBe(false);
-      }
+    // Now create an invalid combination for the same next player:
+    // number of cards does not match lastPlay.count
+    const nextHand = state.playerHands[nextPlayerIndex];
+    if (nextHand.length >= 2) {
+      const [c1, c2] = nextHand;
+      const resultInvalidCombo = room.playCards(nextPlayer.id, [c1.id, c2.id]);
+      expect(resultInvalidCombo.success).toBe(false);
     }
   });
 
