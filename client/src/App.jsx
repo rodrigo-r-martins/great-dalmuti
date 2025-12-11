@@ -21,7 +21,13 @@ export default function App() {
   const [error, setError] = useState(null);
 
   // Hooks
-  useGameSocketEvents(socketApi, setGame, setView, setError, setRoomId);
+  useGameSocketEvents({
+    socketApi,
+    setGame,
+    setView,
+    setError,
+    setRoomId,
+  });
   const handlers = useGameHandlers(socketApi, roomId, playerId, setError);
 
   return (

@@ -1,16 +1,17 @@
 import { useEffect, useRef } from "react";
+import type { GameState } from "../../../shared/types";
 
 /**
  * Plays a beep sound when it becomes the player's turn
  */
-export function useTurnSound(isMyTurn, gameState) {
+export function useTurnSound(isMyTurn: boolean, gameState: GameState): void {
   const prevIsMyTurnRef = useRef(false);
 
   useEffect(() => {
     // Only play sound when transitioning from not-my-turn to my-turn
     if (isMyTurn && !prevIsMyTurnRef.current && gameState === "playing") {
       try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 

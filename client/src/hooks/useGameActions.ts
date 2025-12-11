@@ -1,9 +1,22 @@
 import { useCallback } from "react";
+import type { GameSnapshot } from "../../../shared/types";
+import type { SocketApi } from "./useSocket";
+
+interface GameActions {
+  handleEndGame: () => void;
+  handleLeaveGame: () => void;
+  handleStartNextRound: () => void;
+}
 
 /**
  * Provides game action handlers with confirmations
  */
-export function useGameActions(socketApi, game, playerId, isHost) {
+export function useGameActions(
+  socketApi: SocketApi | null,
+  game: GameSnapshot | null,
+  playerId: string,
+  isHost: boolean,
+): GameActions {
   const { emit } = socketApi ?? {};
 
   const handleEndGame = useCallback(() => {

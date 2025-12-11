@@ -1,4 +1,4 @@
-import type { Card } from "../models/Card";
+import type { Card } from "../../../shared/types";
 
 export class DeckBuilder {
   private static readonly CARD_COUNTS: Record<number, number> = {

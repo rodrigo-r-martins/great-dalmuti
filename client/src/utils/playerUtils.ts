@@ -1,7 +1,13 @@
+import type { GameSnapshot } from "../../../shared/types";
+
 /**
  * Gets the role/title for a player based on their position
  */
-export function getPlayerRole(playerIndex, game, hostId) {
+export function getPlayerRole(
+  playerIndex: number,
+  game: GameSnapshot,
+  hostId: string | null,
+): string {
   if (game.players[playerIndex]?.id === hostId) {
     return "👑 Host";
   }

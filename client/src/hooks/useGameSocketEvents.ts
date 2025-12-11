@@ -1,32 +1,53 @@
 import { useEffect } from "react";
+import type { GameSnapshot } from "../../../shared/types";
+import type { SocketApi } from "./useSocket";
 
 const VIEW_MENU = "menu";
 const VIEW_LOBBY = "lobby";
 const VIEW_GAME = "game";
 
+type View = typeof VIEW_MENU | typeof VIEW_LOBBY | typeof VIEW_GAME;
+
+interface UseGameSocketEventsParams {
+  socketApi: SocketApi | null;
+  setGame: (game: GameSnapshot | null) => void;
+  setView: (view: View) => void;
+  setError: (error: string | null) => void;
+  setRoomId: (roomId: string) => void;
+}
+
 /**
  * Manages socket event listeners for game state changes
  */
-export function useGameSocketEvents(socketApi, setGame, setView, setError, setRoomId) {
+export function useGameSocketEvents({
+  socketApi,
+  setGame,
+  setView,
+  setError,
+  setRoomId,
+}: UseGameSocketEventsParams): void {
   const { on, off } = socketApi ?? {};
 
   useEffect(() => {
     if (!on || !off) return;
 
-    function handleRoomCreated(nextState) {
+    function handleRoomCreated(...args: unknown[]) {
+      const nextState = args[0] as GameSnapshot;
       setGame(nextState);
       setRoomId(nextState.roomId);
       setView(VIEW_LOBBY);
       setError(null);
     }
 
-    function handlePlayerJoined(nextState) {
+    function handlePlayerJoined(...args: unknown[]) {
+      const nextState = args[0] as GameSnapshot;
       setGame(nextState);
       setView(VIEW_LOBBY);
       setError(null);
     }
 
-    function handleGameUpdated(nextState) {
+    function handleGameUpdated(...args: unknown[]) {
+      const nextState = args[0] as GameSnapshot;
       setGame(nextState);
       setError(null);
       if (nextState.gameState === "playing" || nextState.gameState === "roundEnd") {
@@ -34,8 +55,9 @@ export function useGameSocketEvents(socketApi, setGame, setView, setError, setRo
       }
     }
 
-    function handleError(payload) {
-      const message = payload?.message ?? "Unknown error";
+    function handleError(...args: unknown[]) {
+      const payload = args[0] as { message?: string } | string | undefined;
+      const message = typeof payload === "string" ? payload : payload?.message ?? "Unknown error";
       console.error("Server error:", message);
       setError(message);
     }

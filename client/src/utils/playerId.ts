@@ -1,7 +1,7 @@
 /**
  * Gets or creates a persistent player ID from localStorage
  */
-export function getOrCreatePlayerId() {
+export function getOrCreatePlayerId(): string {
   if (typeof window === "undefined") return "anonymous";
 
   const existing = window.localStorage.getItem("playerId");

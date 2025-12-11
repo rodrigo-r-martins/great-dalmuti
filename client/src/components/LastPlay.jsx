@@ -12,7 +12,7 @@ export function LastPlay({ lastPlay, players }) {
           {lastPlay.cards.map((card) => (
             <div
               key={card.id}
-              className="w-12 h-16 rounded border-2 border-medieval-gold bg-gradient-to-br from-medieval-gold/30 to-gold-light/30 flex items-center justify-center font-bold text-medieval-gold"
+              className="w-12 h-16 rounded border-2 border-medieval-gold bg-linear-to-br from-medieval-gold/30 to-gold-light/30 flex items-center justify-center font-bold text-medieval-gold"
             >
               {card.isJester ? "J" : String(card.value)}
             </div>

@@ -14,7 +14,7 @@ export function GameHeader({ game, isMyTurn }) {
         </div>
         <div className={`inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 font-semibold ${
           isMyTurn 
-            ? 'border-medieval-gold bg-gradient-to-r from-medieval-gold/20 to-gold-light/20 text-medieval-gold turn-indicator' 
+            ? 'border-medieval-gold bg-linear-to-r from-medieval-gold/20 to-gold-light/20 text-medieval-gold turn-indicator' 
             : 'border-royal-purple bg-royal-purple/10 text-royal-purple'
         }`}>
           <span>⏳</span>

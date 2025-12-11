@@ -1,34 +1,8 @@
-import type { Card } from "../models/Card";
-import type { Player } from "../models/Player";
+import type { Card, Player, GameState, PublicPlayer, LastPlay, GameSnapshot } from "../../../shared/types";
 import { DeckBuilder } from "./DeckBuilder";
 
-export type GameState = "waiting" | "playing" | "roundEnd";
-
-export interface PublicPlayer {
-  id: string;
-  name: string;
-}
-
-export interface LastPlay {
-  player: number;
-  cards: Card[];
-  value: number;
-  count: number;
-}
-
-export interface GameSnapshot {
-  roomId: string;
-  players: PublicPlayer[];
-  gameState: GameState;
-  currentPlayer: number;
-  lastPlay: LastPlay | null;
-  playerHands: Card[][];
-  finishedPlayers: number[];
-  passedPlayers: number[];
-  gameHistory: LastPlay[];
-  hostId: string | null;
-  roundNumber: number;
-}
+// Re-export types for backward compatibility
+export type { GameState, PublicPlayer, LastPlay, GameSnapshot };
 
 /**
  * Aggregate root for a single game room.

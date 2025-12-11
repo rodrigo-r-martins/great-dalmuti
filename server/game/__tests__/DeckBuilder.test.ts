@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DeckBuilder } from "../core/DeckBuilder";
-import type { Card } from "../models/Card";
+import type { Card } from "../../../shared/types";
 
 function countByValue(deck: Card[]): Record<number, number> {
   return deck.reduce<Record<number, number>>((acc, card) => {
