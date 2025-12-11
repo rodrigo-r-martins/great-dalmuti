@@ -9,6 +9,11 @@ const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
 const app = express();
 app.use(cors());
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 const server = http.createServer(app);
 
 const io = new SocketIOServer(server, {
