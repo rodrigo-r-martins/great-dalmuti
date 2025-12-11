@@ -62,6 +62,51 @@ export class GameRoom {
     this.roomId = roomId;
   }
 
+  /**
+   * Marks a player as having left the current round. For the purposes of turn
+   * order and minimum player counts, a player who leaves is treated as if they
+   * have finished the round.
+   */
+  playerLeft(playerId: string): { success: boolean; ended: boolean } {
+    const index = this.findPlayerIndex(playerId);
+    if (index === -1) {
+      return { success: false, ended: false };
+    }
+
+    const alreadyFinished = this.finishedPlayers.includes(index);
+
+    if (!alreadyFinished) {
+      this.finishedPlayers.push(index);
+      this.playerHands[index] = [];
+
+      if (this.currentPlayer === index) {
+        this.nextPlayer();
+      }
+    }
+
+    const activePlayers = this.players
+      .map((_, i) => i)
+      .filter((i) => !this.finishedPlayers.includes(i));
+
+    let ended = false;
+    if (activePlayers.length < 3 && this.gameState === "playing") {
+      this.gameState = "roundEnd";
+      ended = true;
+    }
+
+    return { success: true, ended };
+  }
+
+  /**
+   * Ends the current game at the host's request. All players are considered
+   * finished and the game transitions to a terminal roundEnd state.
+   */
+  endGameByHost(): void {
+    this.finishedPlayers = this.players.map((_, index) => index);
+    this.playerHands = this.playerHands.map(() => []);
+    this.gameState = "roundEnd";
+  }
+
   addPlayer(playerId: string, playerName: string, socketId: string): boolean {
     if (this.players.length >= 6) {
       return false;

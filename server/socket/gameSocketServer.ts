@@ -28,6 +28,11 @@ type PassPlayPayload = {
   playerId: string;
 };
 
+type LeaveGamePayload = {
+  roomId: string;
+  playerId: string;
+};
+
 type RequestTipsPayload = {
   roomId: string;
   playerId: string;
@@ -129,6 +134,42 @@ export function registerGameSocketHandlers(io: SocketIOServer): void {
       }
     });
 
+    socket.on("leaveGame", ({ roomId, playerId }: LeaveGamePayload) => {
+      const room = rooms.get(roomId);
+
+      if (!room) {
+        socket.emit("error", { message: "Room not found" });
+        return;
+      }
+
+      const state = room.getState();
+      const isHost = state.hostId === playerId;
+
+      if (isHost) {
+        // If the host leaves, end the game for everyone.
+        room.endGameByHost();
+        io.to(roomId).emit("gameEnded", room.getState());
+        socket.leave(roomId);
+        socket.emit("leftGame", { roomId });
+        return;
+      }
+
+      const result = room.playerLeft(playerId);
+      socket.leave(roomId);
+      socket.emit("leftGame", { roomId });
+
+      // Notify remaining players that someone left and share updated state.
+      io.to(roomId).emit("playerLeft", {
+        roomId,
+        playerId,
+        state: room.getState(),
+      });
+
+      if (result.ended) {
+        io.to(roomId).emit("gameEnded", room.getState());
+      }
+    });
+
     socket.on("requestTips", ({ roomId, playerId }: RequestTipsPayload) => {
       const room = rooms.get(roomId);
 
@@ -139,6 +180,24 @@ export function registerGameSocketHandlers(io: SocketIOServer): void {
 
       const tips = room.getBuddyTipsForPlayer(playerId);
       socket.emit("buddyTips", { roomId, playerId, tips });
+    });
+
+    socket.on("endGame", ({ roomId, playerId }: { roomId: string; playerId: string }) => {
+      const room = rooms.get(roomId);
+
+      if (!room) {
+        socket.emit("error", { message: "Room not found" });
+        return;
+      }
+
+      const state = room.getState();
+      if (state.hostId !== playerId) {
+        socket.emit("error", { message: "Only the host can end the game" });
+        return;
+      }
+
+      room.endGameByHost();
+      io.to(roomId).emit("gameEnded", room.getState());
     });
 
     socket.on("disconnect", () => {

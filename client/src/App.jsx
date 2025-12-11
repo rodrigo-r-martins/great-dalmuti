@@ -32,6 +32,11 @@ export default function App() {
   const [game, setGame] = useState(null);
   const [error, setError] = useState(null);
 
+  function handleLeftGame() {
+    setGame(null);
+    setView(VIEW_MENU);
+  }
+
   useEffect(() => {
     function handleRoomCreated(nextState) {
       setGame(nextState);
@@ -66,6 +71,8 @@ export default function App() {
     on("cardsPlayed", handleGameUpdated);
     on("playerPassed", handleGameUpdated);
     on("error", handleError);
+    on("gameEnded", handleGameUpdated);
+    on("leftGame", handleLeftGame);
 
     return () => {
       off("roomCreated", handleRoomCreated);
@@ -74,6 +81,8 @@ export default function App() {
       off("cardsPlayed", handleGameUpdated);
       off("playerPassed", handleGameUpdated);
       off("error", handleError);
+      off("gameEnded", handleGameUpdated);
+      off("leftGame", handleLeftGame);
     };
   }, [on, off]);
 
