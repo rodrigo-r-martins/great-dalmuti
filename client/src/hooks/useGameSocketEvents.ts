@@ -1,31 +1,22 @@
 import { useEffect } from "react";
 import type { GameSnapshot } from "../../../shared/types";
-import type { SocketApi } from "./useSocket";
+import { useGameStore } from "../store/gameStore";
 
 const VIEW_MENU = "menu";
 const VIEW_LOBBY = "lobby";
 const VIEW_GAME = "game";
 
-type View = typeof VIEW_MENU | typeof VIEW_LOBBY | typeof VIEW_GAME;
-
-interface UseGameSocketEventsParams {
-  socketApi: SocketApi | null;
-  setGame: (game: GameSnapshot | null) => void;
-  setView: (view: View) => void;
-  setError: (error: string | null) => void;
-  setRoomId: (roomId: string) => void;
-}
-
 /**
  * Manages socket event listeners for game state changes
+ * Now uses Zustand store instead of props
  */
-export function useGameSocketEvents({
-  socketApi,
-  setGame,
-  setView,
-  setError,
-  setRoomId,
-}: UseGameSocketEventsParams): void {
+export function useGameSocketEvents(): void {
+  const socketApi = useGameStore((state) => state.socketApi);
+  const setGame = useGameStore((state) => state.setGame);
+  const setView = useGameStore((state) => state.setView);
+  const setError = useGameStore((state) => state.setError);
+  const setRoomId = useGameStore((state) => state.setRoomId);
+
   const { on, off } = socketApi ?? {};
 
   useEffect(() => {

@@ -13,10 +13,10 @@ export function PlayerHand({ hand, selectedIds, onToggleCard }) {
           }}
         >
           <Card
-            card={card}
-            selected={selectedIds.includes(card.id)}
-            onToggle={() => onToggleCard(card.id)}
-          />
+          card={card}
+          selected={selectedIds.includes(card.id)}
+          onToggle={() => onToggleCard(card.id)}
+        />
         </div>
       ))}
       {hand.length === 0 && (

@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import type { GameSnapshot } from "../../../shared/types";
-import type { SocketApi } from "./useSocket";
+import { useGame, usePlayerId, useSocketApi } from "../store/gameStore";
 
 interface GameActions {
   handleEndGame: () => void;
@@ -10,14 +9,15 @@ interface GameActions {
 
 /**
  * Provides game action handlers with confirmations
+ * Now uses Zustand store instead of props
  */
-export function useGameActions(
-  socketApi: SocketApi | null,
-  game: GameSnapshot | null,
-  playerId: string,
-  isHost: boolean,
-): GameActions {
+export function useGameActions(): GameActions {
+  const socketApi = useSocketApi();
+  const game = useGame();
+  const playerId = usePlayerId();
   const { emit } = socketApi ?? {};
+
+  const isHost = game?.hostId === playerId;
 
   const handleEndGame = useCallback(() => {
     if (!emit || !isHost || !game) return;

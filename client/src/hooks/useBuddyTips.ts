@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import type { GameSnapshot } from "../../../shared/types";
-import type { SocketApi } from "./useSocket";
+import { useGame, usePlayerId, useSocketApi } from "../store/gameStore";
 
 interface BuddyTipsPayload {
   playerId?: string;
@@ -9,13 +8,13 @@ interface BuddyTipsPayload {
 
 /**
  * Manages buddy tips from the server
+ * Now uses Zustand store instead of props
  */
-export function useBuddyTips(
-  socketApi: SocketApi | null,
-  game: GameSnapshot | null,
-  playerId: string,
-): string[] {
+export function useBuddyTips(): string[] {
   const [buddyTips, setBuddyTips] = useState<string[]>([]);
+  const socketApi = useSocketApi();
+  const game = useGame();
+  const playerId = usePlayerId();
   const { emit, on, off } = socketApi ?? {};
 
   useEffect(() => {

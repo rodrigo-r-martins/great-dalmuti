@@ -1,6 +1,11 @@
 import { PlayerCard } from "./PlayerCard";
+import { useGame } from "../store/gameStore";
 
-export function PlayersList({ game, playerId }) {
+export function PlayersList() {
+  const game = useGame();
+
+  if (!game) return null;
+
   return (
     <div className="mb-6">
       <h3 className="text-lg font-semibold text-ui-primary mb-4">
@@ -12,8 +17,6 @@ export function PlayersList({ game, playerId }) {
             key={player.id}
             player={player}
             playerIndex={index}
-            game={game}
-            playerId={playerId}
             showCardsLeft={false}
           />
         ))}

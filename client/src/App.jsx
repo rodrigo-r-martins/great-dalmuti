@@ -1,58 +1,57 @@
-import { useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useSocket } from "./hooks/useSocket";
 import { useGameSocketEvents } from "./hooks/useGameSocketEvents";
-import { useGameHandlers } from "./hooks/useGameHandlers";
 import { getOrCreatePlayerId } from "./utils/playerId";
+import { useGameStore, useView, useConnected } from "./store/gameStore";
 import { AppHeader } from "./components/AppHeader";
 import { ConnectionStatus } from "./components/ConnectionStatus";
 import { GameViewRouter } from "./components/GameViewRouter";
 
-const VIEW_MENU = "menu";
-
 export default function App() {
   const { connected, emit, on, off } = useSocket();
-  const socketApi = { emit, on, off };
+  
+  // Memoize socketApi to prevent unnecessary re-renders
+  const socketApi = useMemo(() => ({ emit, on, off }), [emit, on, off]);
 
-  const [view, setView] = useState(VIEW_MENU);
-  const [roomId, setRoomId] = useState("");
-  const [playerId] = useState(() => getOrCreatePlayerId());
-  const [playerName, setPlayerName] = useState("");
-  const [game, setGame] = useState(null);
-  const [error, setError] = useState(null);
+  // Zustand store
+  const setSocketApi = useGameStore((state) => state.setSocketApi);
+  const setConnected = useGameStore((state) => state.setConnected);
+  const setPlayerId = useGameStore((state) => state.setPlayerId);
+  const playerId = useGameStore((state) => state.playerId);
 
-  // Hooks
-  useGameSocketEvents({
-    socketApi,
-    setGame,
-    setView,
-    setError,
-    setRoomId,
-  });
-  const handlers = useGameHandlers(socketApi, roomId, playerId, setError);
+  // Initialize socket API and connection status in store
+  useEffect(() => {
+    setSocketApi(socketApi);
+  }, [socketApi, setSocketApi]);
+
+  useEffect(() => {
+    setConnected(connected);
+  }, [connected, setConnected]);
+
+  // Initialize player ID
+  useEffect(() => {
+    if (!playerId) {
+      setPlayerId(getOrCreatePlayerId());
+    }
+  }, [playerId, setPlayerId]);
+
+  // Set up socket event listeners
+  useGameSocketEvents();
+
+  const view = useView();
+  const connectedState = useConnected();
 
   return (
     <div className="flex flex-col gap-6">
-      {view === VIEW_MENU && <AppHeader connected={connected} />}
+      {view === "menu" && <AppHeader connected={connectedState} />}
 
-      {view !== VIEW_MENU && (
+      {view !== "menu" && (
         <div className="flex items-center justify-center">
-          <ConnectionStatus connected={connected} size="sm" />
+          <ConnectionStatus connected={connectedState} size="sm" />
         </div>
       )}
 
-      <GameViewRouter
-        view={view}
-        game={game}
-        connected={connected}
-        roomId={roomId}
-        playerId={playerId}
-        playerName={playerName}
-        error={error}
-        socketApi={socketApi}
-        handlers={handlers}
-        onRoomIdChange={setRoomId}
-        onPlayerNameChange={setPlayerName}
-      />
+      <GameViewRouter />
     </div>
   );
 }

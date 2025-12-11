@@ -1,6 +1,12 @@
 import { getPlayerRole } from "../utils/playerUtils";
+import { useGame, usePlayerId } from "../store/gameStore";
 
-export function PlayerCard({ player, playerIndex, game, playerId, showCardsLeft = true }) {
+export function PlayerCard({ player, playerIndex, showCardsLeft = true }) {
+  const game = useGame();
+  const playerId = usePlayerId();
+
+  if (!game) return null;
+
   const isYou = player.id === playerId;
   const isHost = player.id === game.hostId;
   const isFinished = game.finishedPlayers.includes(playerIndex);

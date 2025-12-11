@@ -1,6 +1,11 @@
 import { PlayerCard } from "./PlayerCard";
+import { useGame } from "../store/gameStore";
 
-export function TheCourt({ game, playerId }) {
+export function TheCourt() {
+  const game = useGame();
+
+  if (!game) return null;
+
   return (
     <div className="card-table">
       <h3 className="text-xl font-display font-bold text-royal-purple-dark mb-4">
@@ -12,8 +17,6 @@ export function TheCourt({ game, playerId }) {
             key={player.id}
             player={player}
             playerIndex={index}
-            game={game}
-            playerId={playerId}
             showCardsLeft={true}
           />
         ))}

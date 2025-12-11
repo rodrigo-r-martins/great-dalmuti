@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { HowToPlayModal } from "./HowToPlayModal";
+import { useGameStore, useConnected, useError } from "../store/gameStore";
+import { useGameActions } from "../store/gameActions";
 
-export function Menu({
-  connected,
-  roomId,
-  playerName,
-  onRoomIdChange,
-  onPlayerNameChange,
-  onCreateRoom,
-  onJoinRoom,
-  error,
-}) {
+export function Menu() {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  
+  const connected = useConnected();
+  const error = useError();
+  const roomId = useGameStore((state) => state.roomId);
+  const playerName = useGameStore((state) => state.playerName);
+  const setRoomId = useGameStore((state) => state.setRoomId);
+  const setPlayerName = useGameStore((state) => state.setPlayerName);
+  const { handleCreateRoom, handleJoinRoom } = useGameActions();
   
   // Allow submits as soon as inputs are filled; socket.io will
   // buffer events until the connection is established.
@@ -20,13 +21,13 @@ export function Menu({
   function handleCreate(e) {
     e.preventDefault();
     if (!canSubmit) return;
-    onCreateRoom({ roomId: roomId.trim(), playerName: playerName.trim() });
+    handleCreateRoom({ roomId: roomId.trim(), playerName: playerName.trim() });
   }
 
   function handleJoin(e) {
     e.preventDefault();
     if (!canSubmit) return;
-    onJoinRoom({ roomId: roomId.trim(), playerName: playerName.trim() });
+    handleJoinRoom({ roomId: roomId.trim(), playerName: playerName.trim() });
   }
 
   return (
@@ -38,7 +39,7 @@ export function Menu({
             <input
               type="text"
               value={playerName}
-              onChange={(e) => onPlayerNameChange(e.target.value)}
+              onChange={(e) => setPlayerName(e.target.value)}
               placeholder="Enter your name"
               className="input-field w-full text-base h-12"
             />
@@ -68,7 +69,7 @@ export function Menu({
               <input
                 type="text"
                 value={roomId}
-                onChange={(e) => onRoomIdChange(e.target.value)}
+                onChange={(e) => setRoomId(e.target.value)}
                 placeholder="Enter room code"
                 className="input-field w-full text-base h-12"
               />

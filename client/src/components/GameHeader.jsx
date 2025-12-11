@@ -1,4 +1,14 @@
-export function GameHeader({ game, isMyTurn }) {
+import { useGame, usePlayerId } from "../store/gameStore";
+
+export function GameHeader() {
+  const game = useGame();
+  const playerId = usePlayerId();
+
+  if (!game) return null;
+
+  const myIndex = game.players.findIndex((p) => p.id === playerId);
+  const isMyTurn = myIndex === game.currentPlayer && game.gameState === "playing";
+
   return (
     <div className="card-table">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

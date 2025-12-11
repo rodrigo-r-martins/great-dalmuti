@@ -1,6 +1,8 @@
 import { useRoomSharing } from "../hooks/useRoomSharing";
+import { useRoomId } from "../store/gameStore";
 
-export function LobbyHeader({ roomId }) {
+export function LobbyHeader() {
+  const roomId = useRoomId();
   const { handleCopyRoomCode, handleShareRoom } = useRoomSharing(roomId);
 
   return (
