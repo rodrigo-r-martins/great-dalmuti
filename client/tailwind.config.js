@@ -11,7 +11,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        "table-green": "#14532d",
+        plum: "#3A2C40",
+        "panel-charcoal": "#1F2433",
+        "dalmuti-gold": "#FBBF24",
+        "dalmuti-green": "#10B981",
+        "card-parchment": "#F7F4EB",
       },
     },
   },

@@ -3,7 +3,7 @@ export function Lobby({ game, playerId, onStartGame }) {
   const canStart = isHost && game.gameState === "waiting";
 
   return (
-    <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-6 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+    <div className="rounded-2xl border border-slate-700/60 bg-panel-charcoal/95 p-6 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
       <h2 className="text-xl font-semibold tracking-tight">Lobby – Room {game.roomId}</h2>
       <p className="mt-2 text-sm text-slate-300">
         Players in room ({game.players.length}):

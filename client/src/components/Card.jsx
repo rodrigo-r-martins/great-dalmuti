@@ -22,17 +22,17 @@ export function Card({ card, selected, onToggle }) {
     <button
       type="button"
       className={[
-        "min-w-[2.4rem] rounded-xl border px-2 py-1 text-xs font-semibold text-slate-100 transition",
-        "border-slate-500/70 bg-linear-gradient(to bottom, #1e293b, #0f172a) shadow-sm shadow-black/70",
-        selected && "border-amber-400 shadow-amber-500/40 -translate-y-[2px] scale-[1.03]",
-        card.isJester && "from-amber-400 to-amber-900 text-slate-950",
+        "min-w-[2.7rem] rounded-xl border px-2 py-1 text-xs font-semibold text-slate-900 transition",
+        "border-slate-700 bg-card-parchment shadow-sm shadow-black/40",
+        selected && "border-dalmuti-gold shadow-[0_0_12px_rgba(251,191,36,0.7)] -translate-y-2",
+        card.isJester && "border-dalmuti-gold text-slate-900",
       ]
         .filter(Boolean)
         .join(" ")}
       onClick={onToggle}
     >
       <div className="flex flex-col items-center leading-tight">
-        <span className="text-[0.7rem] opacity-80">{title}</span>
+        <span className="text-[0.65rem] opacity-80">{title}</span>
         <span className="mt-0.5 text-sm">{label}</span>
       </div>
     </button>

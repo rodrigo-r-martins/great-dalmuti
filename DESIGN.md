@@ -1,68 +1,72 @@
-This is a great project! The Great Dalmuti is a fun game, and bringing in a modern, visual UI will significantly enhance the player experience.
+## 👑 UI Design Specification Document: The Great Dalmuti (Revised)
 
-Here is a design concept for a modern, visually rich interface, focusing on replacing the number buttons with stylized card art, and improving the overall layout.
-
-### **1. General Aesthetic: Regal Minimalism**
-
-- **Theme:** Modern courtly/regal feel. Think polished digital wood and rich velvet.
-- **Color Palette (Dark Theme):**
-  - **Background:** Deep Charcoal or Navy Blue (`#1A202C`).
-  - **Accents:** Muted Gold (`#FBBF24`) for highlights and active elements.
-  - **Text:** Soft White or Light Gray (`#E2E8F0`).
-  - **Typography:** A clean, modern sans-serif font (like Inter or Roboto) for all text, ensuring maximum readability.
-- **Feel:** Use soft, subtle shadows and slightly rounded corners on all UI panels to give depth without looking cluttered.
+This document specifies the visual components, styles, and layout based on the final, stylized mock-up, focusing on the deep purple background and modern, illustrated cards.
 
 ---
 
-### **2. Card Design Concept**
+### 1. Visual Aesthetic & Textures
 
-Since the Dalmuti cards represent social ranks, the visual design should clearly convey the status of each card.
+- **Overall Theme:** Regal and modern, blending rich, deep colors with clean, organized UI panels.
+- **Primary Page Background:** A deep, muted purple/mauve color (`#3A2C40` approx.), potentially with a subtle, dark fabric or texture overlay (like velvet or dark paper) to provide visual warmth and depth.
+- **Panel Surfaces:** Clean, dark, solid panels (`#1F2433` approx.) with soft, large rounded corners (12-16px radius). These panels float clearly above the textured background.
 
-| Card Rank  | Title/Role (Conceptual)     | Visual Design Concept                                                                                                                                                                                                               |
-| :--------- | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1**      | **Dalmuti (The Sovereign)** | A highly detailed, ornate card. Center image: A crowned King or Queen on a golden throne. Heavy gold border, deep crimson accents.                                                                                                  |
-| **2**      | **Archduke/Duchess**        | A very high-ranking courtier. Center image: A noble in rich purple robes. Prominent silver/platinum border.                                                                                                                         |
-| **3-10**   | **Standard Ranks**          | A consistent, clean design. The card background (e.g., a colored shield/lozenge) is repeated N times to denote the rank (e.g., 5 stylized shields on the '5' card). Use a common suit symbol (like a stylized crest) in the center. |
-| **11**     | **Masons/Merchants**        | Simple, earthy colors (brown, forest green). Center image: Stylized tools or a figure representing craft/labor. Minimalistic frame.                                                                                                 |
-| **12**     | **Peasant**                 | The plainest card. Muted, rough texture (e.g., simulated burlap). Center image: A single, simple farming tool or a sheaf of wheat. Very thin, non-ornate border.                                                                    |
-| **Jester** | **Wild Card**               | Bright, contrasting colors (e.g., half-red, half-black). Center image: A classic Jester/Fool, visually distinct and slightly manic, to emphasize its wild nature.                                                                   |
+### 2. Color Palette (Confirmed)
 
-| **Corners:** Each card prominently displays the rank (1-12) in the top-left and bottom-right corners, using a stylized number that matches the overall theme.
+This palette is directly derived from the mock-up's successful color choices.
+
+| Element                | Color Name           | Hex Code (Approximate) | Purpose                                                             |
+| :--------------------- | :------------------- | :--------------------- | :------------------------------------------------------------------ |
+| **Primary Background** | Deep Mauve/Plum      | `#3A2C40`              | Main page color and textured base.                                  |
+| **Panel Background**   | Dark Charcoal/Navy   | `#1F2433`              | Background for information boxes (Room, Hand, Players, Buddy).      |
+| **Text (Primary)**     | Off-White/Light Gray | `#E2E8F0`              | Main text color for readability.                                    |
+| **Accents/Active**     | Muted Gold/Yellow    | `#FBBF24`              | Primary action buttons, selection indicators, and focused elements. |
+| **Success/Turn**       | Vibrant Green        | `#10B981`              | Status indicator (Connected, "Your Turn").                          |
+| **Card Face**          | Off-White/Parchment  | `#F7F4EB`              | The light background color of the actual playing card art.          |
 
 ---
 
-### **3. UI Layout and Components**
+### 3. Typography
 
-The screen will be redesigned into three primary zones: **The Court** (Players), **The Table** (Trick), and **The Hand** (Your cards and actions).
+- **Font Family:** A clean, legible sans-serif font (e.g., Roboto, Inter).
+- **Hierachy:**
+  - **Game Title:** Large, stylized font (as seen in the mock-up header, potentially a serif or display font for flair).
+  - **Panel Titles:** Bold, Off-White (18-20px).
+  - **Body Text:** Regular, Light Gray (14-16px).
+  - **Turn/Status Text:** Bold, using **Vibrant Green** or **Muted Gold**.
 
-#### **A. The Court (Top/Side Panels)**
+---
 
-- **Players Area:** Move player information to the sides or a sleek top bar, arranged as if they are sitting around a table.
-  - **Visual Status:** Instead of just a list, display a small **Avatar/Icon** for each player (Rodrigo (you), Carol, Claudio).
-  - **Card Count:** A small icon of a card stack with a number (e.g., **`[ 12 ]`**) clearly showing how many cards the opponent has left.
-  - **Role Indicator:** A status badge under the name displaying their current rank (e.g., `[Grand Duke]`, `[Greater Peasant]`).
+### 4. Card Design Specifications (The Illustrated Cards)
 
-#### **B. The Table (Center Stage)**
+The cards are the central visual element, featuring a distinct, stylized, slightly vintage illustration style.
 
-- **Turn Indicator:** The current player's name is highlighted with a gold glow, and a clean banner in the center shows: **"♦️ Rodrigo's Turn"**
-- **Trick Area:** This is the main focus.
-  - When cards are played, they are displayed here as the actual **Card Images**, fanned out slightly to show all cards in the set (e.g., a "Triple of 10s").
-  - The cards are slightly faded/transparent to indicate that they are "out of play" and are now the target to beat.
+- **Card Face Color:** Light Parchment (`#F7F4EB`).
+- **Visual Rank:** Each rank (1-12, Jester) must feature a unique, thematic illustration that conveys status (e.g., the gold-crowned figure for the 1, the distinct Jester image).
+- **Rank Numbers:** The numbers (e.g., $1\text{, } 5\text{-5}$) must be clearly displayed within the card art, using a dark color for high contrast.
 
-#### **C. Your Hand (Bottom Section)**
+### 5. UI Layout and Interaction
 
-- **Visual Hand:** The number buttons are replaced by the **Card Images** described in section 2.
-  - The cards (2, 3, 5, 6, 8, 9, 9, 9, 10, 10, 10, 10, 11, 11, 12) are arranged horizontally in a slightly overlapping "rack" at the bottom.
-  - Cards should be grouped by rank for easy viewing.
-- **Selection:** When a player taps a card, it rises slightly and gets a bright, persistent **Gold Highlight/Glow**.
-- **Action Bar:**
-  - **"Play Selected"** (`#FBBF24` Gold button): This button becomes enabled/solid only when a valid set of cards is selected.
-  - **"Pass"** (Softer gray button): Always available.
+#### 5.1. Your Hand Panel (Center Interaction)
 
-#### **D. Dalmuti Buddy (Contextual Helper)**
+- **Cards:** Displayed as illustrated images, slightly overlapped.
+- **Selection Feedback:**
+  - **Click/Tap:** Card lifts on the Z-axis (`transform: translateY(-10px);`).
+  - **Glow:** Card receives a thick, vibrant border or shadow glow using **Muted Gold** (`#FBBF24`).
+- **Action Buttons:**
+  - **"Play selected"**: Solid fill of **Muted Gold**. Must use appropriate hover/active states (slight darkening of the gold).
+  - **"Pass"**: Secondary button style—dark panel background with a **Muted Gold** border or text outline.
 
-- Instead of a large, static panel, turn it into a **Contextual Tip Bubble** or a smaller, collapsible sidebar.
-- **Dynamic Feedback:** The _Buddy_ provides instant feedback based on your selection:
-  - _(When single 9 is selected):_ "✅ Valid Play: Single 9. (Current trick: No cards played)"
-  - _(When a 9 and a 10 are selected):_ "❌ Invalid Play: Cards must match rank."
-  - _(After a play of a pair of 8s)_: "💡 Suggestion: Beat a pair of 8s with a lower pair (7s, 6s, 5s, etc.) or a single card if you Pass."
+#### 5.2. Players Panel (Top Right)
+
+- **Card Count:** Displayed prominently next to the name. The mock-up uses a stylized card icon and a numerical count (e.g., `[ 10 ]`).
+- **Visual Order:** When a player wins a hand or changes status, their ranking/role should be updated visually (e.g., small status badge).
+
+#### 5.3. Room/Trick Panel (Top Left)
+
+- **Turn Indicator:** The text **"Your turn!"** uses **Vibrant Green** or **Muted Gold** for immediate visibility.
+- **Played Cards:** This area will display the card images played in the current trick, possibly fanned out and slightly lowered in opacity to indicate they are the _target to beat_.
+
+#### 5.4. Dalmuti Buddy Panel (Bottom)
+
+- **Aesthetic:** The panel maintains the standard **Panel Background** color.
+- **Function:** Clear, bulleted tips. The **"Hide tips"** button should use low-contrast text to remain subtle.

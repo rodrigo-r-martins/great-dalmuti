@@ -86,12 +86,12 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
   return (
     <div className="flex flex-col gap-4">
       {/* The Table (center stage) */}
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+      <div className="rounded-2xl border border-slate-700/60 bg-panel-charcoal/95 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
         <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
           <h2 className="text-base font-semibold tracking-tight text-slate-200">
             Room {game.roomId}
           </h2>
-          <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-500/15 px-3 py-1 text-xs font-medium text-amber-100 shadow-sm shadow-amber-500/40">
+          <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-dalmuti-gold/70 bg-dalmuti-gold/15 px-3 py-1 text-xs font-medium text-dalmuti-gold shadow-sm shadow-amber-500/40">
             <span className="text-amber-300">♦</span>
             <span>
               {game.players[game.currentPlayer]?.name ?? "?"}
@@ -104,7 +104,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
           <strong className="font-semibold">
             {game.players[myIndex]?.name ?? "Unknown"}
           </strong>
-          {isMyTurn && <span className="text-emerald-300"> – your turn!</span>}
+          {isMyTurn && <span className="text-dalmuti-green"> – your turn!</span>}
         </p>
 
         {lastPlay ? (
@@ -138,7 +138,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
       </div>
 
       {/* The Hand (bottom section) */}
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+      <div className="rounded-2xl border border-slate-700/60 bg-panel-charcoal/95 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
         <h3 className="text-base font-semibold tracking-tight">Your hand</h3>
         <PlayerHand hand={myHand} selectedIds={selectedIds} onToggleCard={toggleCard} />
 
@@ -147,7 +147,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
             type="button"
             onClick={handlePlay}
             disabled={!isMyTurn || selectedIds.length === 0}
-            className="inline-flex items-center justify-center rounded-full border border-amber-400/80 bg-amber-500/25 px-4 py-2 text-sm font-medium text-amber-100 shadow-md shadow-amber-500/40 transition hover:bg-amber-500/35 disabled:cursor-default disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-full border border-dalmuti-gold bg-dalmuti-gold px-4 py-2 text-sm font-medium text-slate-900 shadow-md shadow-amber-500/40 transition hover:brightness-95 disabled:cursor-default disabled:opacity-60"
           >
             Play selected
           </button>
@@ -155,7 +155,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
             type="button"
             onClick={handlePass}
             disabled={!isMyTurn}
-            className="inline-flex items-center justify-center rounded-full border border-slate-600/70 bg-slate-900/90 px-4 py-2 text-sm font-medium text-slate-100 shadow-md shadow-black/50 transition hover:border-sky-400 hover:shadow-sky-500/30 disabled:cursor-default disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-full border border-dalmuti-gold/60 bg-panel-charcoal px-4 py-2 text-sm font-medium text-dalmuti-gold shadow-md shadow-black/40 transition hover:border-dalmuti-gold disabled:cursor-default disabled:opacity-50"
           >
             Pass
           </button>
@@ -194,7 +194,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
       </div>
 
       {/* The Court (players around the table) */}
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 p-4 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+      <div className="rounded-2xl border border-slate-700/60 bg-panel-charcoal/95 p-4 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
         <h3 className="text-sm font-semibold tracking-tight text-slate-200">
           The Court
         </h3>
@@ -255,7 +255,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
       </div>
 
       {/* Dalmuti Buddy (contextual helper) */}
-      <div className="mt-2 w-full max-w-sm self-end rounded-2xl border border-slate-700/60 bg-slate-900/95 p-4 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
+      <div className="mt-2 w-full max-w-sm self-end rounded-2xl border border-slate-700/60 bg-panel-charcoal/95 p-4 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold tracking-tight">
