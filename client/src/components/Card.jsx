@@ -18,22 +18,89 @@ export function Card({ card, selected, onToggle }) {
 
   const title = card.isJester ? "Jester" : titles[card.value] ?? "";
 
+  // Determine card color based on rank
+  function getCardColor() {
+    if (card.isJester) {
+      return {
+        bg: "bg-gradient-to-br from-card-jester to-purple-600",
+        border: "border-pink-500",
+        text: "text-white",
+      };
+    }
+    const value = card.value;
+    if (value <= 2) {
+      // Royal (1-2)
+      return {
+        bg: "bg-gradient-to-br from-card-royal via-purple-500 to-medieval-gold",
+        border: "border-medieval-gold",
+        text: "text-white",
+      };
+    } else if (value <= 4) {
+      // Noble (3-4)
+      return {
+        bg: "bg-gradient-to-br from-card-noble to-blue-600",
+        border: "border-blue-700",
+        text: "text-white",
+      };
+    } else if (value <= 8) {
+      // Merchant (5-8)
+      return {
+        bg: "bg-gradient-to-br from-card-merchant to-green-600",
+        border: "border-green-700",
+        text: "text-white",
+      };
+    } else {
+      // Peasant (9-12)
+      return {
+        bg: "bg-gradient-to-br from-card-peasant to-orange-600",
+        border: "border-orange-700",
+        text: "text-white",
+      };
+    }
+  }
+
+  const colors = getCardColor();
+
   return (
     <button
       type="button"
       className={[
-        "min-w-[2.7rem] rounded-xl border px-2 py-1 text-xs font-semibold text-slate-900 transition",
-        "border-slate-700 bg-card-parchment shadow-sm shadow-black/40",
-        selected && "border-dalmuti-gold shadow-[0_0_12px_rgba(251,191,36,0.7)] -translate-y-2",
-        card.isJester && "border-dalmuti-gold text-slate-900",
+        "relative w-14 h-20 sm:w-16 sm:h-24 rounded-lg transition-all duration-200",
+        "shadow-card hover:shadow-card-hover hover:-translate-y-2",
+        "flex flex-col items-center justify-center p-1.5",
+        colors.bg,
+        colors.text,
+        selected 
+          ? "border-2 border-medieval-gold shadow-[0_0_10px_rgba(214,158,46,0.8)] -translate-y-1 scale-110 z-20"
+          : `border-2 ${colors.border}`,
       ]
         .filter(Boolean)
         .join(" ")}
       onClick={onToggle}
     >
-      <div className="flex flex-col items-center leading-tight">
-        <span className="text-[0.65rem] opacity-80">{title}</span>
-        <span className="mt-0.5 text-sm">{label}</span>
+      {/* Selected indicator overlay */}
+      {selected && (
+        <div className="absolute inset-0 rounded-lg bg-medieval-gold/20 border-2 border-medieval-gold pointer-events-none" />
+      )}
+      
+      {/* Top corner rank */}
+      <div className="absolute top-1 left-1 text-xs font-bold leading-none z-10">
+        {label}
+      </div>
+      
+      {/* Center value (large) */}
+      <div className="text-2xl sm:text-3xl font-bold leading-none z-10">
+        {label}
+      </div>
+      
+      {/* Title below center number */}
+      <div className="text-[0.5rem] sm:text-[0.6rem] font-semibold opacity-90 leading-tight text-center mt-1 z-10">
+        {title}
+      </div>
+      
+      {/* Bottom corner rank (rotated) */}
+      <div className="absolute bottom-1 right-1 text-xs font-bold leading-none transform rotate-180 z-10">
+        {label}
       </div>
     </button>
   );

@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { HowToPlayModal } from "./HowToPlayModal";
+
 export function Menu({
   connected,
   roomId,
@@ -8,6 +11,8 @@ export function Menu({
   onJoinRoom,
   error,
 }) {
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
+  
   // Allow submits as soon as inputs are filled; socket.io will
   // buffer events until the connection is established.
   const canSubmit = roomId.trim() !== "" && playerName.trim() !== "";
@@ -25,61 +30,76 @@ export function Menu({
   }
 
   return (
-    <div className="rounded-2xl border border-slate-700/60 bg-panel-charcoal/95 p-6 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md">
-      <h2 className="text-xl font-semibold tracking-tight">Join or Create a Room</h2>
-      <form className="mt-4 flex flex-col gap-4" onSubmit={handleCreate}>
-        <label className="flex flex-col items-start gap-1.5 text-sm">
-          <span className="text-slate-200">Player name</span>
-          <input
-            type="text"
-            value={playerName}
-            onChange={(e) => onPlayerNameChange(e.target.value)}
-            placeholder="Your name"
-            className="w-full rounded-lg border border-slate-600/70 bg-slate-900/80 px-3 py-2 text-sm text-slate-50 shadow-inner shadow-black/40 outline-none transition focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
-          />
-        </label>
+    <div className="animate-fade-in mx-auto lg:min-w-2xl md:min-w-xl min-w-md max-w-2xl">
+      <div className="card-table">
+        <form className="flex flex-col gap-6" onSubmit={handleCreate}>
+          <label className="flex flex-col items-start gap-2 text-left">
+            <span className="text-ui-primary font-semibold">Your Name</span>
+            <input
+              type="text"
+              value={playerName}
+              onChange={(e) => onPlayerNameChange(e.target.value)}
+              placeholder="Enter your name"
+              className="input-field w-full text-base h-12"
+            />
+          </label>
 
-        <label className="flex flex-col items-start gap-1.5 text-sm">
-          <span className="text-slate-200">Room ID</span>
-          <input
-            type="text"
-            value={roomId}
-            onChange={(e) => onRoomIdChange(e.target.value)}
-            placeholder="e.g. dalmuti-1"
-            className="w-full rounded-lg border border-slate-600/70 bg-slate-900/80 px-3 py-2 text-sm text-slate-50 shadow-inner shadow-black/40 outline-none transition focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
-          />
-        </label>
+          <div className="flex flex-col gap-4">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="btn-primary w-full text-lg py-4 disabled:cursor-not-allowed"
+            >
+              🎮 Create New Game
+            </button>
+            <button
+              type="button"
+              disabled={!canSubmit}
+              onClick={handleJoin}
+              className="btn-primary w-full text-lg py-4 disabled:cursor-not-allowed"
+            >
+              🚪 Join Game
+            </button>
+          </div>
 
-        <div className="flex flex-wrap gap-2 pt-1">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="inline-flex items-center justify-center rounded-full border border-slate-500/60 bg-slate-900/90 px-4 py-2 text-sm font-medium text-slate-50 shadow-md shadow-black/50 transition hover:border-sky-400 hover:shadow-sky-500/30 disabled:cursor-default disabled:opacity-50"
-          >
-            Create room
-          </button>
+          <div className="flex flex-col gap-2">
+            <label className="flex flex-col items-start gap-2 text-left">
+              <span className="text-ui-secondary text-sm">Room Code</span>
+              <input
+                type="text"
+                value={roomId}
+                onChange={(e) => onRoomIdChange(e.target.value)}
+                placeholder="Enter room code"
+                className="input-field w-full text-base h-12"
+              />
+            </label>
+          </div>
+
+          {!connected && (
+            <div className="flex items-center justify-center gap-2 text-sm text-ui-muted">
+              <span className="h-2 w-2 rounded-full bg-warning animate-pulse"></span>
+              <span>Waiting for server connection...</span>
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-lg border-l-4 border-error bg-red-50 p-3 text-sm text-error">
+              {error}
+            </div>
+          )}
+        </form>
+        
+        <div className="flex items-center justify-center gap-4 pt-4 text-sm">
           <button
             type="button"
-            disabled={!canSubmit}
-            onClick={handleJoin}
-            className="inline-flex items-center justify-center rounded-full border border-slate-500/60 bg-slate-900/90 px-4 py-2 text-sm font-medium text-slate-50 shadow-md shadow-black/50 transition hover:border-emerald-400 hover:shadow-emerald-500/30 disabled:cursor-default disabled:opacity-50"
+            onClick={() => setShowHowToPlay(true)}
+            className="text-ui-muted hover:text-royal-purple transition-colors cursor-pointer"
           >
-            Join room
+            📖 How to Play
           </button>
         </div>
-
-        {!connected && (
-          <p className="mt-2 text-xs text-slate-400">
-            Waiting for server connection...
-          </p>
-        )}
-
-        {error && (
-          <p className="mt-2 text-xs font-medium text-amber-400">
-            {error}
-          </p>
-        )}
-      </form>
+      </div>
+      <HowToPlayModal isOpen={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
     </div>
   );
 }

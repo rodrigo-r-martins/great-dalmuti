@@ -114,6 +114,12 @@ export default function App() {
     emit("passPlay", { roomId, playerId });
   }
 
+  function handleLeaveRoom() {
+    if (!roomId) return;
+    setError(null);
+    emit("leaveGame", { roomId, playerId });
+  }
+
   let content = null;
 
   if (!game || view === VIEW_MENU) {
@@ -130,7 +136,14 @@ export default function App() {
       />
     );
   } else if (view === VIEW_LOBBY) {
-    content = <Lobby game={game} playerId={playerId} onStartGame={handleStartGame} />;
+    content = (
+      <Lobby
+        game={game}
+        playerId={playerId}
+        onStartGame={handleStartGame}
+        onLeaveRoom={handleLeaveRoom}
+      />
+    );
   } else {
     content = (
       <Game
@@ -146,30 +159,57 @@ export default function App() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
-          The Great Dalmuti
-        </h1>
-        <p className="mt-1 text-sm text-slate-400">
-          Multiplayer card game – server authoritative
-        </p>
-        <p
-          className={
-            "mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium " +
-            (connected
-              ? "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-500/40"
-              : "bg-rose-500/10 text-rose-300 ring-1 ring-rose-500/40")
-          }
-        >
-          <span
+      {view === VIEW_MENU && (
+        <header className="text-center animate-fade-in">
+          <div className="mb-2">
+            <h1 className="font-display text-5xl sm:text-6xl font-bold text-white mb-2 drop-shadow-lg">
+              👑 The Great Dalmuti
+            </h1>
+            <p className="text-lg text-gold-light/90 font-medium">
+              Medieval Card Game Mayhem
+            </p>
+          </div>
+          <div
             className={
-              "h-2 w-2 rounded-full " +
-              (connected ? "bg-emerald-400" : "bg-rose-400")
+              "mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-md " +
+              (connected
+                ? "bg-forest-green-light/20 text-white border-2 border-forest-green-light"
+                : "bg-error/20 text-white border-2 border-error")
             }
-          />
-          {connected ? "Connected to server" : "Disconnected"}
-        </p>
-      </header>
+          >
+            <span
+              className={
+                "h-2 w-2 rounded-full " +
+                (connected ? "bg-forest-green-light animate-pulse" : "bg-error")
+              }
+            />
+            <span>{connected ? "✓" : "✗"}</span>
+            {connected ? "Connected to server" : "Disconnected"}
+          </div>
+        </header>
+      )}
+
+      {view !== VIEW_MENU && (
+        <div className="flex items-center justify-center">
+            <div
+              className={
+                "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm " +
+                (connected
+                  ? "bg-forest-green-light/20 text-white border border-forest-green-light"
+                  : "bg-error/20 text-white border border-error")
+              }
+            >
+              <span
+                className={
+                  "h-2 w-2 rounded-full " +
+                  (connected ? "bg-forest-green-light" : "bg-error")
+                }
+              />
+              <span>{connected ? "✓" : "✗"}</span>
+              {connected ? "Connected" : "Disconnected"}
+            </div>
+        </div>
+      )}
 
       {content}
     </div>
