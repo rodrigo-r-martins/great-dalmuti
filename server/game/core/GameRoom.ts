@@ -196,6 +196,158 @@ export class GameRoom {
     };
   }
 
+  /**
+   * Returns human-readable suggestions for a specific player, used by the
+   * frontend \"buddy\" helper. This logic lives next to the rules engine so
+   * that tips always stay consistent with the real game rules.
+   */
+  getBuddyTipsForPlayer(playerId: string): string[] {
+    const playerIndex = this.findPlayerIndex(playerId);
+
+    if (playerIndex === -1) {
+      return [
+        "You are not part of this room. Join the room again from the main menu.",
+      ];
+    }
+
+    const hand = this.playerHands[playerIndex] ?? [];
+
+    if (this.gameState !== "playing") {
+      if (this.gameState === "waiting") {
+        const hostName =
+          this.players.find((player) => player.id === this.hostId)?.name ??
+          "the host";
+        return [
+          "The game has not started yet.",
+          `Wait for ${hostName} to start the game once everyone has joined.`,
+        ];
+      }
+
+      if (this.gameState === "roundEnd") {
+        return [
+          "This round has finished.",
+          "You can start a new round or create a new room to play again.",
+        ];
+      }
+    }
+
+    if (hand.length === 0) {
+      return [
+        "You have no cards left in your hand.",
+        "You have already finished this round. Watch the remaining players finish up.",
+      ];
+    }
+
+    const isMyTurn = playerIndex === this.currentPlayer;
+    const lastPlay = this.lastPlay;
+
+    if (!isMyTurn) {
+      const current =
+        this.players[this.currentPlayer]?.name ?? "another player";
+      return [
+        `It is currently ${current}'s turn.`,
+        "Watch what they play and think about whether you could beat that set or would rather pass on your turn.",
+      ];
+    }
+
+    // Group this player's hand by value and collect Jesters.
+    const byValue = new Map<number, Card[]>();
+    const jesters: Card[] = [];
+
+    for (const card of hand) {
+      if (card.isJester) {
+        jesters.push(card);
+      } else {
+        const existing = byValue.get(card.value) ?? [];
+        existing.push(card);
+        byValue.set(card.value, existing);
+      }
+    }
+
+    const tips: string[] = [];
+
+    if (!lastPlay) {
+      // Player is leading a new trick.
+      tips.push(
+        "You are leading a new trick. You can play any set where all non‑Jester cards share the same number.",
+      );
+
+      const sortedValues = Array.from(byValue.keys()).sort((a, b) => a - b);
+
+      // Suggest up to three low single cards.
+      for (const value of sortedValues.slice(0, 3)) {
+        tips.push(`Play a single ${value} to start with a modest lead.`);
+      }
+
+      // Suggest a pair / triple if available.
+      for (const value of sortedValues) {
+        const cardsOfValue = byValue.get(value)!;
+        const total = cardsOfValue.length + jesters.length;
+        if (total >= 2) {
+          tips.push(
+            `You can also lead with a pair of ${value}s (using a Jester as wild if needed).`,
+          );
+          break;
+        }
+      }
+
+      if (jesters.length > 0) {
+        tips.push(
+          "Jesters are wild when mixed with other cards (for example, a 6 and a Jester act like a pair of 6s).",
+        );
+      }
+    } else {
+      // Player must follow the current leading set.
+      const requiredCount = lastPlay.count;
+      const maxValue = lastPlay.value - 1;
+
+      tips.push(
+        `To beat the current play, you must play ${requiredCount} cards of a lower rank than ${lastPlay.value}.`,
+      );
+
+      const sortedValues = Array.from(byValue.keys()).sort((a, b) => a - b);
+      const options: { value: number; usesJesters: boolean }[] = [];
+
+      for (const value of sortedValues) {
+        if (value > maxValue) continue;
+
+        const cardsOfValue = byValue.get(value)!;
+        const total = cardsOfValue.length + jesters.length;
+
+        if (total >= requiredCount) {
+          const usesJesters = cardsOfValue.length < requiredCount;
+          options.push({ value, usesJesters });
+        }
+      }
+
+      if (options.length === 0) {
+        tips.push(
+          "You do not have any set that can beat the current play. Passing is usually the best choice here.",
+        );
+      } else {
+        for (const option of options.slice(0, 3)) {
+          tips.push(
+            `Play ${requiredCount} × ${option.value}${
+              option.usesJesters ? " using Jesters as wilds" : ""
+            } to beat the current set.`,
+          );
+        }
+
+        tips.push(
+          "If you prefer to save strong cards for later, you can still choose to pass instead of beating this play.",
+        );
+      }
+    }
+
+    if (tips.length === 0) {
+      tips.push(
+        "You can always choose to pass if you are not comfortable with any play.",
+      );
+    }
+
+    return tips;
+  }
+
   private findPlayerIndex(playerId: string): number {
     return this.players.findIndex((player) => player.id === playerId);
   }

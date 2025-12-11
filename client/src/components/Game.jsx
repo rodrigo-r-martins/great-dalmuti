@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayerHand } from "./PlayerHand";
 
-export function Game({ game, playerId, onPlayCards, onPass, error }) {
+export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) {
   const [selectedIds, setSelectedIds] = useState([]);
+  const [showBuddy, setShowBuddy] = useState(true);
+  const [buddyTips, setBuddyTips] = useState([]);
 
   const myIndex = game.players.findIndex((p) => p.id === playerId);
   const myHand = myIndex >= 0 ? game.playerHands[myIndex] ?? [] : [];
@@ -29,6 +31,28 @@ export function Game({ game, playerId, onPlayCards, onPass, error }) {
   }
 
   const lastPlay = game.lastPlay;
+
+  const { emit, on, off } = socketApi ?? {};
+
+  useEffect(() => {
+    if (!on || !off) return;
+
+    function handleBuddyTips(payload) {
+      if (!payload) return;
+      if (payload.playerId && payload.playerId !== playerId) return;
+      setBuddyTips(Array.isArray(payload.tips) ? payload.tips : []);
+    }
+
+    on("buddyTips", handleBuddyTips);
+    return () => {
+      off("buddyTips", handleBuddyTips);
+    };
+  }, [on, off, playerId]);
+
+  useEffect(() => {
+    if (!emit || !game) return;
+    emit("requestTips", { roomId: game.roomId, playerId });
+  }, [emit, game, playerId]);
 
   return (
     <div className="grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_minmax(0,2fr)]">
@@ -127,6 +151,42 @@ export function Game({ game, playerId, onPlayCards, onPass, error }) {
             );
           })}
         </ul>
+    </div>
+
+      <div className="mt-4 rounded-2xl border border-slate-700/60 bg-slate-900/90 p-5 text-slate-50 shadow-2xl shadow-black/60 backdrop-blur-md md:col-span-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold tracking-tight">
+              Dalmuti Buddy
+            </h3>
+            <p className="mt-0.5 text-xs text-slate-400">
+              Simple suggestions to help you learn which plays are valid.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowBuddy((value) => !value)}
+            className="inline-flex items-center justify-center rounded-full border border-slate-600/70 bg-slate-900/90 px-3 py-1.5 text-xs font-medium text-slate-100 shadow-md shadow-black/40 transition hover:border-sky-400 hover:shadow-sky-500/30"
+          >
+            {showBuddy ? "Hide tips" : "Show tips"}
+          </button>
+        </div>
+
+        {showBuddy && (
+          <>
+            {buddyTips.length === 0 ? (
+              <p className="mt-3 text-xs text-slate-400">
+                Waiting for tips from the server...
+              </p>
+            ) : (
+              <ul className="mt-3 list-disc space-y-1.5 pl-6 text-xs text-slate-200">
+                {buddyTips.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

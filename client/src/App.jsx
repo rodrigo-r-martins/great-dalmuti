@@ -130,6 +130,7 @@ export default function App() {
         onPlayCards={handlePlayCards}
         onPass={handlePass}
         error={error}
+        socketApi={{ emit, on, off }}
       />
     );
   }

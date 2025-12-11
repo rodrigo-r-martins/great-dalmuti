@@ -28,6 +28,11 @@ type PassPlayPayload = {
   playerId: string;
 };
 
+type RequestTipsPayload = {
+  roomId: string;
+  playerId: string;
+};
+
 const rooms = new Map<string, GameRoom>();
 
 export function registerGameSocketHandlers(io: SocketIOServer): void {
@@ -122,6 +127,18 @@ export function registerGameSocketHandlers(io: SocketIOServer): void {
       } else if (result.error) {
         socket.emit("error", { message: result.error });
       }
+    });
+
+    socket.on("requestTips", ({ roomId, playerId }: RequestTipsPayload) => {
+      const room = rooms.get(roomId);
+
+      if (!room) {
+        socket.emit("error", { message: "Room not found" });
+        return;
+      }
+
+      const tips = room.getBuddyTipsForPlayer(playerId);
+      socket.emit("buddyTips", { roomId, playerId, tips });
     });
 
     socket.on("disconnect", () => {
