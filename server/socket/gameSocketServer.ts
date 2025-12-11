@@ -38,6 +38,11 @@ type RequestTipsPayload = {
   playerId: string;
 };
 
+type StartNextRoundPayload = {
+  roomId: string;
+  playerId: string;
+};
+
 const rooms = new Map<string, GameRoom>();
 
 export function registerGameSocketHandlers(io: SocketIOServer): void {
@@ -199,6 +204,39 @@ export function registerGameSocketHandlers(io: SocketIOServer): void {
       room.endGameByHost();
       io.to(roomId).emit("gameEnded", room.getState());
     });
+
+    socket.on(
+      "startNextRound",
+      ({ roomId, playerId }: StartNextRoundPayload) => {
+        const room = rooms.get(roomId);
+
+        if (!room) {
+          socket.emit("error", { message: "Room not found" });
+          return;
+        }
+
+        const state = room.getState();
+
+        if (state.hostId !== playerId) {
+          socket.emit("error", { message: "Only the host can start a new round" });
+          return;
+        }
+
+        if (state.gameState !== "roundEnd") {
+          socket.emit("error", { message: "Round has not finished yet" });
+          return;
+        }
+
+        const started = room.startNextRound();
+
+        if (!started) {
+          socket.emit("error", { message: "Unable to start next round" });
+          return;
+        }
+
+        io.to(roomId).emit("gameStarted", room.getState());
+      },
+    );
 
     socket.on("disconnect", () => {
       console.log("Player disconnected:", socket.id);

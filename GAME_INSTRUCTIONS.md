@@ -54,11 +54,11 @@ This project implements **The Great Dalmuti** as an online, multiplayer card gam
 
 2. **Taxes (Tabletop rule)**
    - Before each hand, in the physical game:
-     - The **Greater Peon** must give their **two best cards** to the **Greater Dalmuti**, and receives the Dalmuti’s **two worst cards** in return.
+     - The **Greater Peon** must give their **two best cards** (lowest ranks, e.g. 1s, 2s, etc.) to the **Greater Dalmuti**, and receives the Dalmuti’s **two worst cards** (highest ranks) in return.
      - The **Lesser Peon** must give their **best card** to the **Lesser Dalmuti**, and receives the Dalmuti’s **worst card** in return.
    - If a player holds **both Jesters**, they may call a **Revolution** (or **Greater Revolution** if that player is the Greater Peon), which cancels taxes or reverses social order.
 
-> **Implementation note:** Taxes and revolutions are **not yet implemented** in the server logic. Each online round starts from an even state after dealing.
+> **Implementation note:** Taxes are applied by the server whenever a new round starts after the first hand, using the finishing order of the previous round to determine roles. Revolutions are **not yet implemented**.
 
 ---
 

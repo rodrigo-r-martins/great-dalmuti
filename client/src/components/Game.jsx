@@ -73,6 +73,16 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
     emit("leaveGame", { roomId: game.roomId, playerId });
   }
 
+  function handleStartNextRoundClick() {
+    if (!emit || !isHost) return;
+    if (game.gameState !== "roundEnd") return;
+    const confirmed = window.confirm(
+      "Start a new round using the current ranking (with card taxes applied)?",
+    );
+    if (!confirmed) return;
+    emit("startNextRound", { roomId: game.roomId, playerId });
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {/* The Table (center stage) */}
@@ -132,7 +142,7 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
         <h3 className="text-base font-semibold tracking-tight">Your hand</h3>
         <PlayerHand hand={myHand} selectedIds={selectedIds} onToggleCard={toggleCard} />
 
-        <div className="mt-3 flex justify-center gap-3">
+        <div className="mt-3 flex flex-wrap justify-center gap-3">
           <button
             type="button"
             onClick={handlePlay}
@@ -153,13 +163,24 @@ export function Game({ game, playerId, onPlayCards, onPass, error, socketApi }) 
 
         <div className="mt-4 flex justify-between gap-3 text-xs text-slate-300">
           {isHost ? (
-            <button
-              type="button"
-              onClick={handleEndGameClick}
-              className="inline-flex items-center justify-center rounded-full border border-rose-500/70 bg-rose-500/20 px-3 py-1.5 font-medium text-rose-100 shadow-md shadow-rose-500/40 transition hover:bg-rose-500/30"
-            >
-              End game for everyone
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleEndGameClick}
+                className="inline-flex items-center justify-center rounded-full border border-rose-500/70 bg-rose-500/20 px-3 py-1.5 font-medium text-rose-100 shadow-md shadow-rose-500/40 transition hover:bg-rose-500/30"
+              >
+                End game
+              </button>
+              {game.gameState === "roundEnd" && (
+                <button
+                  type="button"
+                  onClick={handleStartNextRoundClick}
+                  className="inline-flex items-center justify-center rounded-full border border-emerald-500/70 bg-emerald-500/20 px-3 py-1.5 font-medium text-emerald-100 shadow-md shadow-emerald-500/40 transition hover:bg-emerald-500/30"
+                >
+                  Start new round
+                </button>
+              )}
+            </>
           ) : (
             <button
               type="button"

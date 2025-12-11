@@ -107,6 +107,127 @@ export class GameRoom {
     this.gameState = "roundEnd";
   }
 
+  /**
+   * Starts a new round after the previous one has finished, using the
+   * finishing order to assign social roles and applying taxes before play.
+   */
+  startNextRound(): boolean {
+    if (this.players.length < 3) {
+      return false;
+    }
+
+    if (this.gameState !== "roundEnd") {
+      return false;
+    }
+
+    if (this.finishedPlayers.length !== this.players.length - 1) {
+      // Round did not end in the standard \"all but one finished\" state.
+      return false;
+    }
+
+    const totalPlayers = this.players.length;
+    const finishedSet = new Set(this.finishedPlayers);
+    const greaterPeonIndex = this.players.findIndex(
+      (_, index) => !finishedSet.has(index),
+    );
+
+    if (greaterPeonIndex === -1) {
+      return false;
+    }
+
+    const greaterDalmutiIndex = this.finishedPlayers[0];
+    const lesserDalmutiIndex =
+      this.finishedPlayers.length > 1 ? this.finishedPlayers[1] : -1;
+    const lesserPeonIndex =
+      totalPlayers >= 4
+        ? this.finishedPlayers[this.finishedPlayers.length - 1]
+        : -1;
+
+    const deck = DeckBuilder.createDeck();
+    this.playerHands = DeckBuilder.dealCards(deck, this.players.length);
+
+    this.applyTaxes({
+      greaterDalmutiIndex,
+      lesserDalmutiIndex,
+      greaterPeonIndex,
+      lesserPeonIndex,
+    });
+
+    this.gameState = "playing";
+    this.currentPlayer = greaterDalmutiIndex;
+    this.lastPlay = null;
+    this.finishedPlayers = [];
+    this.passedPlayers.clear();
+    this.gameHistory.length = 0;
+    this.roundNumber += 1;
+
+    return true;
+  }
+
+  private applyTaxes(config: {
+    greaterDalmutiIndex: number;
+    lesserDalmutiIndex: number;
+    greaterPeonIndex: number;
+    lesserPeonIndex: number;
+  }): void {
+    const {
+      greaterDalmutiIndex,
+      lesserDalmutiIndex,
+      greaterPeonIndex,
+      lesserPeonIndex,
+    } = config;
+
+    // Helper to (re)sort a hand by card value.
+    const sortHand = (hand: Card[]): Card[] =>
+      [...hand].sort((a, b) => a.value - b.value);
+
+    // Greater Peon <-> Greater Dalmuti exchange (two best vs two worst).
+    if (
+      greaterDalmutiIndex >= 0 &&
+      greaterPeonIndex >= 0 &&
+      this.playerHands[greaterDalmutiIndex] &&
+      this.playerHands[greaterPeonIndex]
+    ) {
+      let gdHand = sortHand(this.playerHands[greaterDalmutiIndex]);
+      let gpHand = sortHand(this.playerHands[greaterPeonIndex]);
+
+      const count = Math.min(2, gdHand.length, gpHand.length);
+      if (count > 0) {
+        const gpBest = gpHand.slice(0, count);
+        const gdWorst = gdHand.slice(gdHand.length - count);
+
+        gpHand = gpHand.slice(count).concat(gdWorst);
+        gdHand = gdHand.slice(0, gdHand.length - count).concat(gpBest);
+
+        this.playerHands[greaterPeonIndex] = sortHand(gpHand);
+        this.playerHands[greaterDalmutiIndex] = sortHand(gdHand);
+      }
+    }
+
+    // Lesser Peon <-> Lesser Dalmuti exchange (one best vs one worst).
+    if (
+      lesserDalmutiIndex >= 0 &&
+      lesserPeonIndex >= 0 &&
+      this.playerHands[lesserDalmutiIndex] &&
+      this.playerHands[lesserPeonIndex]
+    ) {
+      let ldHand = sortHand(this.playerHands[lesserDalmutiIndex]);
+      let lpHand = sortHand(this.playerHands[lesserPeonIndex]);
+
+      const count = Math.min(1, ldHand.length, lpHand.length);
+      if (count > 0) {
+        const lpBest = lpHand.slice(0, count);
+        const ldWorst = ldHand.slice(ldHand.length - count);
+
+        lpHand = lpHand.slice(count).concat(ldWorst);
+        ldHand = ldHand.slice(0, ldHand.length - count).concat(lpBest);
+
+        this.playerHands[lesserPeonIndex] = sortHand(lpHand);
+        this.playerHands[lesserDalmutiIndex] = sortHand(ldHand);
+      }
+    }
+  }
+
   addPlayer(playerId: string, playerName: string, socketId: string): boolean {
     if (this.players.length >= 6) {
       return false;
