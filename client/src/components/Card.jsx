@@ -6,7 +6,7 @@ export function Card({ card, selected, onToggle }) {
       type="button"
       className={[
         "min-w-[2.2rem] rounded-xl border px-2 py-1 text-sm font-semibold text-slate-100 transition",
-        "border-slate-500/70 bg-gradient-to-b from-slate-800 to-slate-950 shadow-sm shadow-black/70",
+        "border-slate-500/70 bg-linear-gradient(to bottom, #1e293b, #0f172a) shadow-sm shadow-black/70",
         selected && "border-emerald-400 shadow-emerald-500/40 -translate-y-[2px] scale-[1.03]",
         card.isJester && "from-amber-400 to-amber-900 text-slate-950",
       ]
