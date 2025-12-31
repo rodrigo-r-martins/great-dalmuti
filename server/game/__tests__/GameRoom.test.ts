@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { Card } from "../../shared/types";
 import { GameRoom } from "../core/GameRoom";
 
 function createRoomWithPlayers(count: number): GameRoom {
@@ -30,7 +31,7 @@ describe("GameRoom", () => {
     expect(state.gameState).toBe("playing");
     expect(state.playerHands).toHaveLength(3);
 
-    const totalCards = state.playerHands.reduce((sum, hand) => sum + hand.length, 0);
+    const totalCards = state.playerHands.reduce((sum: number, hand: Card[]) => sum + hand.length, 0);
     expect(totalCards).toBe(80);
   });
 

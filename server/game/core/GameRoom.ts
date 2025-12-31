@@ -1,4 +1,4 @@
-import type { Card, Player, GameState, PublicPlayer, LastPlay, GameSnapshot } from "../../../shared/types";
+import type { Card, Player, GameState, PublicPlayer, LastPlay, GameSnapshot } from "../../shared/types";
 import { DeckBuilder } from "./DeckBuilder";
 
 // Re-export types for backward compatibility
