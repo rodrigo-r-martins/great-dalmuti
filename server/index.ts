@@ -6,8 +6,6 @@ import { registerGameSocketHandlers } from "./socket/gameSocketServer";
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
 
-const app = express();
-
 // CORS configuration - allow both Vercel and localhost
 const allowedOrigins = [
   process.env.CLIENT_URL,
@@ -15,21 +13,25 @@ const allowedOrigins = [
   "http://localhost:5173",
 ].filter(Boolean);
 
+// Shared CORS origin validation function
+function validateOrigin(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void): void {
+  // Allow requests with no origin (like mobile apps or curl requests)
+  if (!origin) return callback(null, true);
+  
+  // Check if origin matches any allowed origin or is a Vercel preview deployment
+  const isAllowed = allowedOrigins.includes(origin) || 
+                    (origin.includes('great-dalmuti') && origin.includes('vercel.app'));
+  
+  if (isAllowed) {
+    callback(null, true);
+  } else {
+    callback(new Error('Not allowed by CORS'));
+  }
+}
+
+const app = express();
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin matches any allowed origin or is a Vercel preview deployment
-    const isAllowed = allowedOrigins.includes(origin) || 
-                      origin.includes('great-dalmuti') && origin.includes('vercel.app');
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: validateOrigin,
   credentials: true,
 }));
 
@@ -42,20 +44,7 @@ const server = http.createServer(app);
 
 const io = new SocketIOServer(server, {
   cors: { 
-    origin: (origin, callback) => {
-      // Allow requests with no origin
-      if (!origin) return callback(null, true);
-      
-      // Check if origin matches any allowed origin or is a Vercel preview deployment
-      const isAllowed = allowedOrigins.includes(origin) || 
-                        origin.includes('great-dalmuti') && origin.includes('vercel.app');
-      
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: validateOrigin,
     credentials: true, 
     methods: ["GET", "POST"],
   },
