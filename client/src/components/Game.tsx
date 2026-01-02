@@ -9,6 +9,7 @@ import { TheCourt } from "./TheCourt";
 import { LastPlay } from "./LastPlay";
 import { PlayerHandSection } from "./PlayerHandSection";
 import { DalmutiBuddy } from "./DalmutiBuddy";
+import { RoundResultsModal } from "./RoundResultsModal";
 
 export function Game() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -72,6 +73,15 @@ export function Game() {
         gameActions={gameActions}
       />
       <DalmutiBuddy tips={buddyTips} />
+      
+      {game.gameState === "roundEnd" && (
+        <RoundResultsModal
+          game={game}
+          isHost={isHost}
+          onStartNextRound={gameActions.handleStartNextRound}
+          onLeaveGame={gameActions.handleLeaveGame}
+        />
+      )}
     </div>
   );
 }

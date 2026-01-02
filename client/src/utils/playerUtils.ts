@@ -14,17 +14,30 @@ export function getPlayerRole(
 
   if (game.gameState === "roundEnd") {
     const pos = game.finishedPlayers.indexOf(playerIndex);
+    const totalPlayers = game.players.length;
+
     if (pos === 0) {
       return "👑 The Great Dalmuti";
-    } else if (pos === 1) {
-      return "👑 Lesser Dalmuti";
-    } else if (pos === game.players.length - 1) {
-      return "Greater Peon";
-    } else if (pos === game.players.length - 2) {
-      return "Lesser Peon";
-    } else if (pos >= 0) {
-      return "Merchant";
     }
+    
+    // Greater Peon is the one who didn't finish
+    if (pos === -1) {
+      return "Greater Peon";
+    }
+
+    // Lesser Dalmuti (2nd place, if more than 3 players)
+    if (pos === 1 && totalPlayers > 3) {
+      return "👑 Lesser Dalmuti";
+    }
+
+    // Lesser Peon (second to last place)
+    // If there are N players, finishedPlayers has N-1 elements.
+    // Index N-2 in finishedPlayers is the second to last player overall.
+    if (pos === totalPlayers - 2 && totalPlayers >= 4) {
+      return "Lesser Peon";
+    }
+
+    return "Merchant";
   }
 
   return "";
