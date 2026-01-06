@@ -8,10 +8,11 @@ export function PlayersList() {
 
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold text-ui-primary mb-4">
-        👤 Players ({game.players.length}/6)
+      <h3 className="text-lg font-semibold text-ui-primary mb-4 flex items-center gap-2">
+        <span>👤</span>
+        <span>Players ({game.players.length}/8)</span>
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {game.players.map((player, index) => (
           <PlayerCard
             key={player.id}

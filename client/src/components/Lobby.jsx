@@ -18,32 +18,34 @@ export function Lobby() {
   const canStart = isHost && game.gameState === "waiting";
 
   return (
-    <div className="animate-fade-in mx-auto max-w-4xl">
+    <div className="animate-fade-in mx-auto max-w-4xl px-2 sm:px-0">
       <div className="card-table mb-6">
         <LobbyHeader />
         <PlayersList />
         <ChatSection />
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 pt-2 border-t border-parchment-dark">
           <div className="flex flex-col sm:flex-row gap-3">
             {canStart ? (
               <button
                 onClick={handleStartGame}
-                className="btn-primary w-full sm:w-auto px-8 py-3 text-lg"
+                className="btn-primary w-full sm:w-auto px-8 py-3 text-lg order-1 sm:order-none"
               >
                 Start Game
               </button>
             ) : (
-              <p className="text-sm text-ui-muted py-2">
-                {isHost
-                  ? "You are the host. Start the game when everyone is ready (needs 3+ players)."
-                  : "Waiting for the host to start the game..."}
-              </p>
+              <div className="flex-1 bg-parchment-dark/50 rounded-lg px-4 py-3 border border-medieval-gold/20 order-2 sm:order-none">
+                <p className="text-sm text-ui-secondary">
+                  {isHost
+                    ? "👑 You are the host. Start the game when everyone is ready (3+ players)."
+                    : "⏳ Waiting for the host to start the game..."}
+                </p>
+              </div>
             )}
             <button
               onClick={handleLeaveRoom}
-              className="btn-secondary w-full sm:w-auto px-6 py-3"
+              className="btn-secondary w-full sm:w-auto px-6 py-3 order-3 sm:order-none"
             >
               Leave Room
             </button>
@@ -51,9 +53,10 @@ export function Lobby() {
           <button
             type="button"
             onClick={() => setShowHowToPlay(true)}
-            className="text-ui-muted hover:text-medieval-gold transition-colors cursor-pointer"
+            className="text-ui-muted hover:text-medieval-gold transition-colors cursor-pointer text-sm font-medium self-center sm:self-start flex items-center gap-2"
           >
-            📖 How to Play
+            <span>📖</span>
+            <span>How to Play</span>
           </button>
         </div>
       </div>

@@ -271,8 +271,14 @@ body::before {
 .card-table {
   background: var(--parchment);
   border-radius: 16px;
-  padding: 24px;
+  padding: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 640px) {
+  .card-table {
+    padding: 24px;
+  }
 }
 
 /* Player Card */

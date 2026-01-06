@@ -10,8 +10,8 @@ export function HowToPlayModal({ isOpen, onClose }) {
         className="card-table max-w-4xl max-h-[90vh] overflow-y-auto animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-3xl font-bold text-royal-purple-dark">
+        <div className="flex items-center justify-between mb-6 sticky top-0 bg-parchment z-10 py-2">
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-royal-purple-dark pr-4">
             📖 How to Play The Great Dalmuti
           </h2>
           <button
